@@ -5,7 +5,7 @@ import org.scalatest.funsuite.AnyFunSuite
 //@See https://www.scalatest.org/scaladoc/3.1.2/org/scalatest/funsuite/AnyFunSuite.html
 class ClimateServiceTest extends AnyFunSuite {
   test("containsWordGlobalWarming - non climate related words should return false") {
-    assert( ClimateService.isClimateRelated("pizza") == false)
+    assert(ClimateService.isClimateRelated("pizza") == false)
   }
 
   test("isClimateRelated - climate related words should return true") {
@@ -16,7 +16,7 @@ class ClimateServiceTest extends AnyFunSuite {
   //@TODO
   test("parseRawData") {
     // our inputs
-    val firstRecord = (2003, 1, 355.2)     //help: to acces 2003 of this tuple, you can do firstRecord._1
+    val firstRecord = (2003, 1, 355.2) //help: to acces 2003 of this tuple, you can do firstRecord._1
     val secondRecord = (2004, 1, 375.2)
     val list1 = List(firstRecord, secondRecord)
 
@@ -31,6 +31,48 @@ class ClimateServiceTest extends AnyFunSuite {
 
   //@TODO
   test("filterDecemberData") {
-    assert(true == false)
+    val input = List(
+      Some(CO2Record(2022, 12, 400.0)),
+      Some(CO2Record(2022, 11, 390.0)),
+      Some(CO2Record(2022, 12, 410.0)),
+      Some(CO2Record(2022, 10, 380.0)),
+      None,
+      Some(CO2Record(2022, 12, 420.0))
+    )
+    val expectedOutput = List(
+      CO2Record(2022, 12, 400.0),
+      CO2Record(2022, 12, 410.0),
+      CO2Record(2022, 12, 420.0)
+    )
+    val actualOutput = ClimateService.filterDecemberData(input)
+    assert(actualOutput == expectedOutput)
   }
+
+
+  test("getMinMax") {
+    val input = List(
+      CO2Record(2022, 12, 400.0),
+      CO2Record(2022, 11, 390.0),
+      CO2Record(2022, 12, 410.0),
+      CO2Record(2022, 10, 380.0)
+    )
+    val expectedOutput = (380.0, 410.0)
+    val actualOutput = ClimateService.getMinMax(input)
+    assert(actualOutput == expectedOutput)
+  }
+
+  test("getMinMaxByYear") {
+    val input = List(
+      CO2Record(2022, 12, 400.0),
+      CO2Record(2022, 11, 390.0),
+      CO2Record(2022, 12, 410.0),
+      CO2Record(2012, 12, 30.0),
+      CO2Record(2022, 10, 380.0)
+    )
+    val expectedOutput = (380.0, 410.0)
+    val actualOutput = ClimateService.getMinMaxByYear(input,2022)
+    assert(actualOutput == expectedOutput)
+  }
+
 }
+
