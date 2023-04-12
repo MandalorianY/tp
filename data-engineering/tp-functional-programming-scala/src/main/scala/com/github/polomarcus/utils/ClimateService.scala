@@ -19,13 +19,7 @@ object ClimateService {
   def isClimateRelated(description: String): Boolean = {
     val keywords = List("global warming", "IPCC", "climate change")
     val lowerDescription = description.toLowerCase
-
-    for (keyword <- keywords) {
-      if (lowerDescription.contains(keyword.toLowerCase)) {
-        return true
-      }
-    }
-    false
+    keywords.map(_.toLowerCase).exists(lowerDescription.contains)
   }
   /**
    * parse a list of raw data and transport it with type into a list of CO2Record
