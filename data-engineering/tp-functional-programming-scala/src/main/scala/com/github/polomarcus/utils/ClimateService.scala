@@ -2,6 +2,7 @@ package com.github.polomarcus.utils
 
 import com.typesafe.scalalogging.Logger
 import com.github.polomarcus.model.CO2Record
+import org.apache.commons.math3.stat.regression.SimpleRegression
 
 import scala.util.matching.Regex
 
@@ -79,7 +80,6 @@ object ClimateService {
     logger.info(s"There are $none_count None values in the input list.")
   }
 
-  import org.apache.commons.math3.stat.regression.SimpleRegression
 
   def estimateCO2LevelsFor2050(recordsWithOptions: List[Option[CO2Record]]): Double = {
     val records: List[CO2Record] = recordsWithOptions.flatten

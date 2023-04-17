@@ -1,6 +1,7 @@
 import com.github.polomarcus.utils.ClimateService
 import com.github.polomarcus.model.CO2Record
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 //@See https://www.scalatest.org/scaladoc/3.1.2/org/scalatest/funsuite/AnyFunSuite.html
 class ClimateServiceTest extends AnyFunSuite {
@@ -72,6 +73,19 @@ class ClimateServiceTest extends AnyFunSuite {
     val expectedOutput = (380.0, 410.0)
     val actualOutput = ClimateService.getMinMaxByYear(input,2022)
     assert(actualOutput == expectedOutput)
+  }
+
+  test("estimateCO2LevelsFor2050") {
+    val input = List(
+      Some(CO2Record(2022, 12, 400.0)),
+      Some(CO2Record(2022, 11, 390.0)),
+      Some(CO2Record(2022, 12, 410.0)),
+      Some(CO2Record(2022, 10, 380.0)),
+      Some(CO2Record(2022, 12, 420.0))
+    )
+    val estimatedLevel = ClimateService.estimateCO2LevelsFor2050(input)
+    assert(estimatedLevel > 420.0)
+
   }
 
 }
