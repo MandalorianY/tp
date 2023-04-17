@@ -20,5 +20,5 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
     - name: Run tests
-        run: sbt test
+      run: sbt test
       working-directory: data-engineering/tp-data-processing-framework
