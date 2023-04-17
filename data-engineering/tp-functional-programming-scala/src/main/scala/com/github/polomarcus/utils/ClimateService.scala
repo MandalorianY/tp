@@ -72,11 +72,27 @@ object ClimateService {
     logger.info("Call ClimateService.filterDecemberData here")
     val december_list = ClimateService.filterDecemberData(list)
     logger.info("Call record.show function here inside a map function")
-    val string_list = december_list.map(_.show())
-    println(string_list)
+      val CO2_list = december_list.map(_.show())
+    println(CO2_list)
     logger.info("Count None values")
     val none_count = list.count(_.isEmpty)
     logger.info(s"There are $none_count None values in the input list.")
+  }
+
+  import org.apache.commons.math3.stat.regression.SimpleRegression
+
+  def estimateCO2LevelsFor2050(recordsWithOptions: List[Option[CO2Record]]): Double = {
+    val records: List[CO2Record] = recordsWithOptions.flatten
+    val regression = new SimpleRegression()
+
+    // Add data points to the regression model
+    records.foreach { record =>
+      regression.addData(record.year, record.ppm)
+    }
+
+    // Predict the CO2 level for 2050
+    val estimatedCO2Level = regression.predict(2050)
+    estimatedCO2Level
   }
 
   /**

@@ -14,7 +14,8 @@ object Main {
     val co2Records = ClimateService.getCO2RawDataFromHawaii()
     val parsedCo2Records = ClimateService.parseRawData(co2Records)
     ClimateService.showCO2Data(parsedCo2Records)
-
+    val estimatedLevel = ClimateService.estimateCO2LevelsFor2050(parsedCo2Records)
+    println(s"The estimated level in 2050 would be $estimatedLevel")
     logger.info("Stopping the app")
     System.exit(0)
   }

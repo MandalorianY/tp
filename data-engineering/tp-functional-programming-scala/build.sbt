@@ -15,6 +15,7 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % logback
 libraryDependencies += "org.slf4j" % "log4j-over-slf4j" % "1.7.32"
 libraryDependencies += "net.logstash.logback" % "logstash-logback-encoder" % "7.0.1"
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % scalaLogging
+libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
 
 // Test
 libraryDependencies +=  "org.scalatest" %% "scalatest" % scalaTest % "test"
