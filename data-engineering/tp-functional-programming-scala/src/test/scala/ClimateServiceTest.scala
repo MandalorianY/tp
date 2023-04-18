@@ -80,7 +80,7 @@ class ClimateServiceTest extends AnyFunSuite {
       Some(CO2Record(2013, 11, 390.0)),
       Some(CO2Record(2014, 12, 410.0)),
       Some(CO2Record(2014, 10, 380.0)),
-      Some(CO2Record(2016, 12, 420.0))
+      Some(CO2Record(2016, 12, 420.0)),
       Some(CO2Record(2017, 12, 430.0))
     )
       val estimatedLevel = ClimateService.estimateCO2LevelsFor2050(input)
