@@ -9,7 +9,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'data-engineering/tp-data-processing-framework/src/**'
+      - 'data-engineering/tp-functional-programming-scala/src/**'
   pull_request:
     branches: [ "main" ]
 
