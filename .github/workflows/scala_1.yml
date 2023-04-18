@@ -31,4 +31,4 @@ jobs:
         cache: 'sbt'
     - name: Run tests
       run: sbt test
-      working-directory: data-engineering/tp-data-processing-framework
+      working-directory: data-engineering/tp-functional-programming-scala
