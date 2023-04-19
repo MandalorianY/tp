@@ -26,10 +26,6 @@ object NewsService {
       newsDataset: Dataset[News]
   ): Dataset[News] = {
     newsDataset.map { news =>
-      val Climate_Related = ClimateService.isClimateRelated(
-        news.description
-      ) || ClimateService.isClimateRelated(news.title)
-
       val enrichedNews = News(
         news.title,
         news.description,
@@ -41,7 +37,8 @@ object NewsService {
         news.editorDeputy,
         news.url,
         news.urlTvNews,
-        Climate_Related,
+        ClimateService.isClimateRelated(news.description) || ClimateService
+          .isClimateRelated(news.title),
         news.media
       )
 

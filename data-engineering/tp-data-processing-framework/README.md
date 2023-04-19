@@ -17,15 +17,21 @@ RDDs are also lazily evaluated, meaning that the computation is not performed un
 Source : https://www.xenonstack.com/blog/rdd-in-spark/#:~:text=Resilient%20Distributed%20Dataset%20(RDD)%20is,that%20resides%20on%20multiple%20nodes.
 
 * What is Spark Dataset API ?
+
 A Dataset is a distributed collection of data. Datasets provide the benefits of RDDs (strong typing, ability to use powerful lambda functions) with the benefits of Spark SQL’s optimized execution engine. 
 It is built on top of Spark SQL and provides a more expressive and efficient API than RDDs for working with structured and semi-structured data.
-
+Dataset is represented as a distributed collection of typed objects (rows) that are partitioned across multiple nodes in a Spark cluster.
+They have the same methods as RDDs, but they also have methods that are optimized for structured data.
 
 source : https://spark.apache.org/docs/latest/api/java/index.html?org/apache/spark/sql/Dataset.html
 
-
 * With which languages can you use Spark ? 
+
+Spark can be used with Java, Scala, Python, R, SQL.
+
 * Which data sources or data sinks can Spark work with ? 
+
+Spark can work lots and lots of different files type and source with HDFS, Cassandra, HBase, Hive, JDBC, JSON, Parquet, ORC, Avro, Kafka, etc.
 
 ### Analyse data with Apache Spark and Scala 
 One engineering team of your company created for you a TV News data stored as JSON inside the folder `data-news-json/`.

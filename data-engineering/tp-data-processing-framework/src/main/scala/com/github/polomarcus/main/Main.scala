@@ -32,11 +32,14 @@ object Main {
 
     // Enrich the dataset by apply the ClimateService.isClimateRelated function to the title and the description of a news
     // a assign this value to the "containsWordGlobalWarming" attribute
+
     val enrichedDataset =
       NewsService.enrichNewsWithClimateMetadata(newsDatasets)
 
     // From now, we'll use only the Dataset API as it's more convenient
+
     val filteredNewsAboutClimate = NewsService.filterNews(enrichedDataset)
+
     // Count how many tv news we have in our data source
     val count = NewsService.getNumberOfNews(newsDatasets)
     logger.info(s"We have ${count} news in our dataset")
