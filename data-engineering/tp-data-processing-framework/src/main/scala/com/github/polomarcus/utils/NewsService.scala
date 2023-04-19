@@ -17,12 +17,14 @@ object NewsService {
     spark.read.json(path).withColumn("date", to_timestamp(col("date"))).as[News]
   }
 
-  /**
-   * Apply ClimateService.isClimateRelated function to see if a news is climate related
-   * @param newsDataset
-   * @return
-   */
-  def enrichNewsWithClimateMetadata(newsDataset: Dataset[News]) : Dataset[News] = {
+  /** Apply ClimateService.isClimateRelated function to see if a news is climate
+    * related
+    * @param newsDataset
+    * @return
+    */
+  def enrichNewsWithClimateMetadata(
+      newsDataset: Dataset[News]
+  ): Dataset[News] = {
     newsDataset.map { news =>
       val enrichedNews = News(
         news.title,
@@ -43,30 +45,31 @@ object NewsService {
     }
   }
 
-  /**
-   * Only keep news about climate
-   *
-   * Tips --> https://alvinalexander.com/scala/how-to-use-filter-method-scala-collections-cookbook/
-   *
-   * @param newsDataset
-   * @return newsDataset but with containsWordGlobalWarming to true
-   */
-  def filterNews(newsDataset: Dataset[News]) : Dataset[News] = {
+  /** Only keep news about climate
+    *
+    * Tips -->
+    * https://alvinalexander.com/scala/how-to-use-filter-method-scala-collections-cookbook/
+    *
+    * @param newsDataset
+    * @return
+    *   newsDataset but with containsWordGlobalWarming to true
+    */
+  def filterNews(newsDataset: Dataset[News]): Dataset[News] = {
     newsDataset.filter { news =>
-      ??? //@TODO complete here
+      news.containsWordGlobalWarming
     }
+
   }
 
-  /**
-   * detect if a sentence is climate related by looking for these words in sentence :
-   * global warming
-   * IPCC
-   * climate change
-   * @param description "my awesome sentence contains a key word like climate change"
-   * @return Boolean True
-   */
+  /** detect if a sentence is climate related by looking for these words in
+    * sentence : global warming IPCC climate change
+    * @param description
+    *   "my awesome sentence contains a key word like climate change"
+    * @return
+    *   Boolean True
+    */
   def getNumberOfNews(dataset: Dataset[News]): Long = {
-    //@TODO look a the Spark API to know how to count
-    return 1 // code here
+    dataset.count()
   }
+
 }
