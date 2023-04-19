@@ -46,7 +46,7 @@ object ClimateService {
    * @return a list
    */
   def filterDecemberData(list: List[Option[CO2Record]]) : List[CO2Record] = {
-    list.flatten.filter(_.month == 12)
+    list.flatten.filterNot(_.month == 12)
   }
   /**
    * **Tips**: look at the read me to find some tips for this function

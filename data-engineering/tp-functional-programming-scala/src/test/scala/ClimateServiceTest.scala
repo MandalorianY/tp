@@ -40,9 +40,8 @@ class ClimateServiceTest extends AnyFunSuite {
       Some(CO2Record(2022, 12, 420.0))
     )
     val expectedOutput = List(
-      CO2Record(2022, 12, 400.0),
-      CO2Record(2022, 12, 410.0),
-      CO2Record(2022, 12, 420.0)
+      CO2Record(2022, 11, 390.0),
+      CO2Record(2022, 10, 380.0)
     )
     val actualOutput = ClimateService.filterDecemberData(input)
     assert(actualOutput == expectedOutput)
