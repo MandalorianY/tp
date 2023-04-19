@@ -17,8 +17,7 @@ libraryDependencies += "net.logstash.logback" % "logstash-logback-encoder" % "7.
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % scalaLogging
 
 // Test
-libraryDependencies +=  "org.scalatest" %% "scalatest" % scalaTest % "test"
-
+libraryDependencies += "org.scalatest" %% "scalatest" % scalaTest % "test"
 
 //Spark (csv writer)
 libraryDependencies += ("org.apache.spark" %% "spark-core" % sparkVersion)
@@ -34,3 +33,4 @@ libraryDependencies += ("org.apache.spark" %% "spark-sql" % sparkVersion)
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.12.6.1"
 
 libraryDependencies += "org.postgresql" % "postgresql" % "42.2.5"
+

@@ -6,7 +6,24 @@ To process a large amount of data partitioned on a data lake, you can use data p
 
 Some questions :
 * What is Spark RDD API ?
+
+RDD stands for Resilient Distributed Dataset.
+Spark's RDD API is a distributed way of manipulating data, making use of fault-tolerant collections that can be processed in parallel across a cluster of computers. 
+Spark uses RDD APIs to achieve faster and efficient method such as map, reduce, filter, groupByKey, join.
+Fault tolerance means that if a node fails, the RDD can be recomputed from the original data by using another node.
+RDDs are immutable, meaning that once they are created, they cannot be modified.
+RDDs are also lazily evaluated, meaning that the computation is not performed until an action is called, such as collect or count.
+
+Source : https://www.xenonstack.com/blog/rdd-in-spark/#:~:text=Resilient%20Distributed%20Dataset%20(RDD)%20is,that%20resides%20on%20multiple%20nodes.
+
 * What is Spark Dataset API ?
+A Dataset is a distributed collection of data. Datasets provide the benefits of RDDs (strong typing, ability to use powerful lambda functions) with the benefits of Spark SQL’s optimized execution engine. 
+It is built on top of Spark SQL and provides a more expressive and efficient API than RDDs for working with structured and semi-structured data.
+
+
+source : https://spark.apache.org/docs/latest/api/java/index.html?org/apache/spark/sql/Dataset.html
+
+
 * With which languages can you use Spark ? 
 * Which data sources or data sinks can Spark work with ? 
 

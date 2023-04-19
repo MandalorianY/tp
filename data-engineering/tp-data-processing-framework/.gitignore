@@ -7,3 +7,6 @@ project/target
 project/project
 .cache/
 **/.cache
+project/.bloop
+.bloop
+.metals

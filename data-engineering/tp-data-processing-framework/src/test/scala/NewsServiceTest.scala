@@ -22,10 +22,14 @@ class NewsServiceTest extends AnyFunSuite {
     "http://localhost:8000/monde/bresil/test.html",
     "http://localhost:8000/replay.html",
     containsWordGlobalWarming = false,
-    "France 2")
+    "France 2"
+  )
 
   val news2 = news.copy(title = "Another news")
-  val newsClimate = news.copy(title = "Climat : pourquoi la France connaît-elle une sécheresse précoce ?", containsWordGlobalWarming = true)
+  val newsClimate = news.copy(
+    title = "Climat : pourquoi la France connaît-elle une sécheresse précoce ?",
+    containsWordGlobalWarming = true
+  )
   val fakeListNews = List(news, news2, newsClimate).toDS().as[News]
 
   test("getNumberOfNews") {
@@ -35,16 +39,18 @@ class NewsServiceTest extends AnyFunSuite {
   test("filterNews") {
     val input = NewsService.filterNews(fakeListNews).collect()
     val output = Array(newsClimate)
-
-    assert( input.sameElements(output) )
+    assert(input.sameElements(output))
   }
 
   test("enrichNewsWithClimateMetadata") {
-    val newstoEnrich = news.copy(title = "Climat : pourquoi la France connaît-elle une sécheresse précoce ?")
+    val newstoEnrich = news.copy(title =
+      "Climat : pourquoi la France connaît-elle une sécheresse précoce ?"
+    )
     val listNews = List(news, newstoEnrich).toDS().as[News]
 
     val input = NewsService.enrichNewsWithClimateMetadata(listNews).collect()
-    val output = Array(news, newstoEnrich.copy(containsWordGlobalWarming = true))
+    val output =
+      Array(news, newstoEnrich.copy(containsWordGlobalWarming = true))
 
     assert(input.sameElements(output))
   }
