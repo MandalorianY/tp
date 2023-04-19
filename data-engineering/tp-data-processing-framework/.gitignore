@@ -10,3 +10,6 @@ project/project
 project/.bloop
 .bloop
 .metals
+project/.metals.sbt
+project/.bloop
+.scalafmt.conf
