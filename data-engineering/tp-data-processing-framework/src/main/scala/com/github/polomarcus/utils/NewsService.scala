@@ -59,9 +59,7 @@ object NewsService {
     *   newsDataset but with containsWordGlobalWarming to true
     */
   def filterNews(newsDataset: Dataset[News]): Dataset[News] = {
-    newsDataset.filter { news =>
-      news.containsWordGlobalWarming
-    }
+    newsDataset.filter(_.containsWordGlobalWarming)
 
   }
 

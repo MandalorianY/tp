@@ -10,7 +10,9 @@ object SparkService {
     SparkSession
       .builder()
       .appName("EPF - TelevisionNewsAnalyser")
-      .master("local[*]") // https://spark.apache.org/docs/3.2.1/submitting-applications.html#master-urls
+      .master(
+        "local[*]"
+      ) // https://spark.apache.org/docs/3.2.1/submitting-applications.html#master-urls
       .getOrCreate()
   }
 }
