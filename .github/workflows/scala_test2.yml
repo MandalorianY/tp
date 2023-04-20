@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Scala test Functional Programming
+name: Scala test Data processing-framewor
 
 on:
   push:
