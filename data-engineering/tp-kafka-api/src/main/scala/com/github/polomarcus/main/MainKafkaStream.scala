@@ -4,7 +4,7 @@ import com.github.polomarcus.utils.KafkaStreamsService
 import com.typesafe.scalalogging.Logger
 
 object MainKafkaStream {
-  def main(args: Array[String])  {
+  def main(args: Array[String])  : Unit ={
     val logger = Logger(this.getClass)
     logger.info("Used `sbt run` to start the app")
 

@@ -5,7 +5,7 @@ import com.github.polomarcus.utils.{KafkaConsumerService, KafkaProducerService}
 import com.typesafe.scalalogging.Logger
 
 object MainKafkaConsumer {
-  def main(args: Array[String]) {
+  def main(args: Array[String]) : Unit ={
     val logger = Logger(this.getClass)
     logger.info("Used `sbt run MainKafkaConsumer` to start the app")
 

@@ -5,7 +5,7 @@ import com.github.polomarcus.utils.KafkaAvroConsumerService
 import com.typesafe.scalalogging.Logger
 
 object MainKafkaAvroConsumer {
-  def main(args: Array[String]) {
+  def main(args: Array[String]) : Unit ={
     val logger = Logger(this.getClass)
     logger.info("Used `sbt run` to start the app")
 
