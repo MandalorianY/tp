@@ -2,7 +2,12 @@ package com.github.polomarcus.main
 
 import com.github.polomarcus.model.News
 import com.typesafe.scalalogging.Logger
-import com.github.polomarcus.utils.{ClimateService, NewsService, SparkService, PostgresService}
+import com.github.polomarcus.utils.{
+  ClimateService,
+  NewsService,
+  SparkService,
+  PostgresService
+}
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode, SparkSession}
 
 object Main {
@@ -18,7 +23,7 @@ object Main {
 
     // Read a JSON data source with the path "./data-news-json"
     // Tips : https://spark.apache.org/docs/latest/sql-data-sources-json.html
-    
+
     val pathToJsonData = "./data-news-json/"
     // To type our dataframe as News, we can use the Dataset API : https://spark.apache.org/docs/latest/sql-getting-started.html#creating-datasets
     val newsDatasets: Dataset[News] = NewsService.read(pathToJsonData)
@@ -31,18 +36,17 @@ object Main {
 
     // Enrich the dataset by apply the ClimateService.isClimateRelated function to the title and the description of a news
     // a assign this value to the "containsWordGlobalWarming" attribute
-    val enrichedDataset = NewsService.enrichNewsWithClimateMetadata(newsDatasets)
+    val enrichedDataset =
+      NewsService.enrichNewsWithClimateMetadata(newsDatasets)
 
     // Count how many tv news we have in our data source
     val count = NewsService.getNumberOfNews(newsDatasets)
     logger.info(s"We have ${count} news in our dataset")
 
-    // @TODO Save using PostgresService.save function
-    ???
-    
+    PostgresService.save(enrichedDataset)
+
     logger.info("Stopping the app")
     spark.stop()
     System.exit(0)
   }
 }
-

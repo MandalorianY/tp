@@ -16,8 +16,7 @@ object PostgresService {
   val dbServer = s"$dbHost:5432/metabase"
 
   def save(dataset: Dataset[News]) = {
-    logger.info(
-      s"""
+    logger.info(s"""
          |Saving news json inside Postgres database with this config
          |server: $dbServer
          |user : $user
@@ -25,7 +24,13 @@ object PostgresService {
          |""".stripMargin)
 
     dataset.write
-      ???
+      .mode(SaveMode.Overwrite)
+      .format("jdbc")
+      .option("url", url)
+      .option("dbtable", tableName)
+      .option("user", user)
+      .option("password", password)
+      .save()
 
     logger.info("Saved news inside PG database")
 

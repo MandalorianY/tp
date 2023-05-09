@@ -10,3 +10,7 @@ project/project
 .cache
 **/.cache
 project/metals.sbt
+.bloop
+project/.bloop
+metals.sbt
+.scalafmt.conf
