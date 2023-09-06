@@ -7,7 +7,7 @@
 ![](https://content.linkedin.com/content/dam/engineering/en-us/blog/migrated/datapipeline_simple.png)
 
 ### Use Kafka with docker
-Start multiples kakfa servers (called brokers) using the docker compose recipe `docker-compose.yml` :
+Start multiples kafka servers (called brokers) using the docker compose recipe `docker-compose.yml` :
 
 ```bash
 docker-compose -f docker-compose.yml up --detached
@@ -38,18 +38,19 @@ Questions:
 * [ ] When should we use a key when producing a message into Kafka ? What are the risks ? [Help](https://stackoverflow.com/a/61912094/3535853)
 * [ ] How does the default partitioner (sticky partition) work with kafka ? [Help1](https://www.confluent.io/fr-fr/blog/apache-kafka-producer-improvements-sticky-partitioner/) and [Help2](https://www.conduktor.io/kafka/producer-default-partitioner-and-sticky-partitioner#Sticky-Partitioner-(Kafka-%E2%89%A5-2.4)-3)
 
-### Kafka Client
-Instead of using the command line interface (CLI) or Conduktor to produce and consume, we are going to code our first app.
+### Coding our own Kafka Client using Scala
+Instead of using the command line interface (CLI) or Conduktor to produce and consume, we are going to code our first app like pros.
 
-Replace `???` and `//@TODO` inside `src/scala/main/com.github.polomarcus/main` and `src/scala/main/com.github.polomarcus/utils` folders
+#### Producer - the service in charge of sending messages
+We are going to replace all `???` and all `//@TODO` inside `src/scala/main/com.github.polomarcus/main` and `src/scala/main/com.github.polomarcus/utils` folders.
 
-#### Producer
 Using the `scala/com.github.polomarcus/utis/KafkaProducerService`, send messages to Kafka and **read them with Conduktor**
 
 Questions :
 * What are serializers (and deserializers) ? What is the one used here ? Why use them ?
 
-#### To run your program 
+#### To run your program with SBT or Docker
+There are 3 ways to run your program :
 ```bash
 sbt "runMain com.github.polomarcus.main.MainKafkaProducer"
 # OR
@@ -57,7 +58,7 @@ sbt run
 # and type "2" to run "com.github.polomarcus.main.MainKafkaProducer"
 
 # OR
-docker-compose run my-scala-app bash
+docker compose run my-scala-app bash
 > sbt
 > run
 ```
@@ -82,10 +83,10 @@ After a while and a lot of deployments and autoscaling (adding and removing due 
 * [ ] Can [idempotence](https://kafka.apache.org/documentation/#producerconfigs_enable.idempotence) help us ?
 * [ ] what is ["min.insync.replicas"](https://kafka.apache.org/documentation/#brokerconfigs_min.insync.replicas) ?
 
-#### Consumer
+#### Consumer - the service in charge of reading messages
 The goal is to read messages from our producer thanks to the ["KafkaConsumerService" class](https://github.com/polomarcus/tp/blob/main/data-engineering/tp-kafka-api/src/main/scala/com/github/polomarcus/utils/KafkaConsumerService.scala#L34-L35).
 
-To run your program
+To run your program (if you don't change anything there will be a `an implementation is missing` error, **that's normal.**
 ```bash
 sbt "runMain com.github.polomarcus.main.MainKafkaConsumer"
 > scala.NotImplementedError: an implementation is missing --> modify the `utils/KafkaConsumerService` class
@@ -93,11 +94,11 @@ sbt "runMain com.github.polomarcus.main.MainKafkaConsumer"
 
 [After modifying the code here](https://github.com/polomarcus/tp/blob/main/data-engineering/tp-kafka-api/src/main/scala/com/github/polomarcus/utils/KafkaConsumerService.scala#L34-L35), you should see messages being read on your terminal.
 
-Open Conduktor to the "Consumers" tab and look what information you can get.
+Open Conduktor to the "Consumers" tab and look what new information you can get (*hint: consumer group*).
 
 Now, resend messages to kafka and look at the consumer group lag inside Conduktor.
 
-What are we noticing ? What we change a configuration to not re read the same data always and always ?
+What are we noticing ? Can we change a configuration to not re read the same data always and always ? Modify it inside our KafkaConsumerService.
 
 ##### Question 1
 * [ ] What happens if your consumer crash while processing data ? What is the "at most once" / "at least once" / "exactly once" semantics ? [Help](https://www.conduktor.io/kafka/complete-kafka-consumer-with-java#Automatic-Offset-Committing-Strategy-1)
@@ -106,7 +107,7 @@ What are we noticing ? What we change a configuration to not re read the same da
 We have introduced a bug in our program, and we would like to replay some data. Can we use Conduktor to help our consumer group? Should we create a new consumer group ?
 * [ ][Help](https://kafka.apache.org/documentation.html#basic_ops_consumer_group)
 
-#### Schema Registry
+#### Schema Registry - to have more control on our messages
 ##### Intro
 Look at :
 * your docker-compose.yml, and the schema-registry service.
@@ -126,20 +127,20 @@ Look at :
 
 [Kafka Streams Data Types and Serialization](https://docs.confluent.io/platform/current/streams/developer-guide/datatypes.html#avro)
 
-1. Inside `KafkaAvroProducerService`, replace `???` to send your first message using Avro and the Schema Registry.
+1. Inside `KafkaAvroProducerService`, replace all `???` to send your first message using Avro and the Schema Registry.
 2. Add a new property to the class `News` called `test: String`
 3. What happens on your console log when sending messages ?
 4. Modify the class `News` from `test: Option[String] = None`
 5. Send another message and on Conduktor Schema Registry tab, see what happens
 
-[About schema evolution](https://docs.confluent.io/platform/current/schema-registry/avro.html#schema-evolution)
+We've experienced a [schema evolution](https://docs.confluent.io/platform/current/schema-registry/avro.html#schema-evolution).
 
 #### Kafka Connect 
-Kafka Connect is a free, open-source component of Apache Kafka® that works as a centralized data hub for simple data integration between databases, key-value stores, search indexes, and file systems. [Learn more here](https://docs.confluent.io/platform/current/connect/index.html)
+> Kafka Connect is a free, open-source component of Apache Kafka® that works as a centralized data hub for simple data integration between databases, key-value stores, search indexes, and file systems. [Learn more here](https://docs.confluent.io/platform/current/connect/index.html)
 
 ![](https://images.ctfassets.net/gt6dp23g0g38/5vGOBwLiNaRedNyB0yaiIu/529a29a059d8971541309f7f57502dd2/ingest-data-upstream-systems.jpg)
 
-Videos to learn :
+Some videos that can be helpful :
 * [Video series with Confluent](https://developer.confluent.io/learn-kafka/kafka-connect/intro/)
 * [Video series with Conduktor](https://www.youtube.com/watch?v=4GSmIE9ji9c&list=PLYmXYyXCMsfMMhiKPw4k1FF7KWxOEajsA&index=25)
 
@@ -151,25 +152,28 @@ One has already being installed via docker-compose.yml, can you spot it ?
 This File Sink connector read from a topic, and write it as a file on your local machine.
 
 ##### How to start a connector ?
-For tests purposes, we are going to use the [Standalone run mode](https://docs.confluent.io/kafka-connectors/self-managed/userguide.html#standalone-mode)
+For tests purposes, we are going to use the [Standalone run mode](https://docs.confluent.io/kafka-connectors/self-managed/userguide.html#standalone-mode) as we do not have a cluster.
 
-In order to run a [FileStream connector](https://docs.confluent.io/platform/current/connect/filestream_connector.html#kconnect-long-filestream-connectors), to read from our topics set inside the `kafka-connect-configs/connect-file-sink-properties`
+We'll run a [FileStream connector](https://docs.confluent.io/platform/current/connect/filestream_connector.html#kconnect-long-filestream-connectors) - a connector that read from a topic and write it as a text file on our server.
 
+To read from a specific topic, we need to configure this file [`kafka-connect-configs/connect-file-sink-properties`](https://github.com/polomarcus/tp/blob/main/data-engineering/tp-kafka-api/kafka-connect-configs/connect-file-sink.properties)
+
+To run our FileStream connector we can operate like this (have a look to the docker-compose.yml file to understand first)
 ```bash
-docker-compose run kafka-connect bash
+docker compose run kafka-connect bash
 > ls
 > cat connect-file-sink.properties
 > connect-standalone connect-standalone.properties connect-file-sink.properties
 ```
 
-A file should have been produced on your local container
+Congrats, a file **should** have been produced on your **local** container :
 ```bash
 ls 
 cat test.sink.txt
 ```
 
-**How can we use this kind of connector for a production use ?** 
-* [ ] Can we find another connector [on the Confluent Hub](https://www.confluent.io/hub/) that can write inside a data lake ?
+**How can we use this kind of connector for a production use ( = real life cases ) ?** 
+* [ ] Can we find another connector [on the Confluent Hub](https://www.confluent.io/hub/) that can write inside **a data lake** instead of a simple text file in one of our servers ?
 
 ##### How do Serializers work for Kafka connect ?
 Inside `kafka-connect-config/connect-file-sink.properties`, we need to set the serializer we used to produce the data, for our case we want to use the **String Serializer** inside our config.
@@ -186,7 +190,7 @@ Look on Conduktor to see if a Connector use a consumer group to bookmark partiti
 
 * [ ] What are the differences between the consumer, the producer APIs, and Kafka streams ? [Help1](https://stackoverflow.com/a/44041420/3535853)
 * [ ] When to use Kafka Streams instead of the consumer API ?
-* [ ] What is a `Serde`?
+* [ ] What is a `SerDe`?
 * [ ] What is a KStream?
 * [ ] What is a KTable? What is a compacted topic ?
 * [ ] What is a GlobalKTable?
@@ -196,9 +200,9 @@ What are the new [configs](https://kafka.apache.org/documentation/#streamsconfig
 
 
 ##### Code
-[!MapReduce](http://coderscat.com/images/2020_09_10_understanding-map-reduce.org_20200918_164359.png)
+![MapReduce](http://coderscat.com/images/2020_09_10_understanding-map-reduce.org_20200918_164359.png)
 
-We are going to aggregate (count) how many times we receive the same word inside the topic ConfService.TOPIC_OUT. For this we need to `map` every message to separate every words.
+We are going to aggregate (count) how many times we receive the same word inside the topic [ConfService.TOPIC_OUT](https://github.com/polomarcus/tp/blob/main/data-engineering/tp-kafka-api/src/main/scala/com/github/polomarcus/conf/ConfService.scala#L8). For this we need to `map` every message to separate every words.
 
 After this, we are going to filter any messages that contains `"filter"`
 

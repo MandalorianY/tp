@@ -9,6 +9,8 @@ project/project
 .metals/
 .cache
 **/.cache
+.DS_Store
+**/.DS_Store
 project/metals.sbt
 .bloop
 project/.bloop
