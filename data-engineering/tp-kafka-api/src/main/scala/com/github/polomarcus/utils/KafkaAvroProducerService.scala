@@ -14,15 +14,27 @@ object KafkaAvroProducerService {
   val logger = Logger(KafkaAvroProducerService.getClass)
 
   private val props = new Properties()
-  props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, ConfService.BOOTSTRAP_SERVERS_CONFIG)
+  props.put(
+    ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+    ConfService.BOOTSTRAP_SERVERS_CONFIG
+  )
 
-  props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+  props.put(
+    ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+    "org.apache.kafka.common.serialization.StringSerializer"
+  )
 
   // We want to serialize the value of a News object here : i.e. do a custom serialization (@see readme)
-  props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroSerializer")
-  props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, ConfService.SCHEMA_REGISTRY)
+  props.put(
+    ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+    "io.confluent.kafka.serializers.KafkaAvroSerializer"
+  )
+  props.put(
+    AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
+    ConfService.SCHEMA_REGISTRY
+  )
 
-  //@see https://kafka.apache.org/documentation/#producerconfigs_enable.idempotence
+  // @see https://kafka.apache.org/documentation/#producerconfigs_enable.idempotence
   props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true")
 
   private val producer = new KafkaProducer[String, Record](props)
@@ -30,7 +42,9 @@ object KafkaAvroProducerService {
   def produce(topic: String, key: String, value: News): Unit = {
 
     // pay attention here
-    val genericAvroRecord = RecordFormat[News].to(value) // @see https://softwaremill.com/hands-on-kafka-streams-in-scala/
+    val genericAvroRecord = RecordFormat[News].to(
+      value
+    ) // @see https://softwaremill.com/hands-on-kafka-streams-in-scala/
 
     val record = new ProducerRecord(topic, key, genericAvroRecord)
     try {
@@ -42,7 +56,7 @@ object KafkaAvroProducerService {
         Partition : ${metadata.get().partition()}
       """)
     } catch {
-      case e:Exception => logger.error(e.toString)
+      case e: Exception => logger.error(e.toString)
     }
   }
 

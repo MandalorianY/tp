@@ -17,32 +17,47 @@ object KafkaConsumerService {
   val props: Properties = new Properties()
   props.put("group.id", ConfService.GROUP_ID)
   props.put("bootstrap.servers", ConfService.BOOTSTRAP_SERVERS_CONFIG)
-  props.put("key.deserializer",
-    "org.apache.kafka.common.serialization.StringDeserializer")
-  props.put("value.deserializer",
-    "org.apache.kafka.common.serialization.StringDeserializer")
+  props.put(
+    "key.deserializer",
+    "org.apache.kafka.common.serialization.StringDeserializer"
+  )
+  props.put(
+    "value.deserializer",
+    "org.apache.kafka.common.serialization.StringDeserializer"
+  )
 
-  props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest") // on the first execution, read from the beginning
+  props.put(
+    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
+    "earliest"
+  ) // on the first execution, read from the beginning
 
-  //@see https://docs.confluent.io/platform/current/clients/consumer.html#offset-management
-  props.put("enable.auto.commit", "false") // @TODO what are the risks to use this config ?
+  // @see https://docs.confluent.io/platform/current/clients/consumer.html#offset-management
+  props.put(
+    "enable.auto.commit",
+    "false"
+  ) // what are the risks to use this config ?
+  // The risk is that if the consumer crashes, it will not be able to read the messages that were not committed
+  // and will read them again. This is called "at least once" delivery.
+  // Commited means that the consumer has read the message and saved the offset in the __consumer_offsets topic
+  // We can have data loss or duplicated
+
   props.put("auto.commit.interval.ms", "1000")
 
   val consumer = new KafkaConsumer[String, String](props)
   val topicToRead = List(topic).asJava
 
-  //@TODO we need to connect our consumer to our topic by **subscribing** it, tips : https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html#idm45788273579960
-  ???
-  
+  // we need to connect our consumer to our topic by **subscribing** it, tips : https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html#idm45788273579960
+  consumer.subscribe(topicToRead)
+
   def consume() = {
     try {
-      for (i <- 0 to 20)  { // to avoid a while(true) loop
+      for (i <- 0 to 20) { // to avoid a while(true) loop
         val messages = consumer.poll(Duration.ofMillis(1000))
-        if( messages.count() > 0) {
+        if (messages.count() > 0) {
           messages.forEach(record => {
-            logger.info(
-              s""" Reading :
-                 |Offset : ${record.offset()} from partition ${record.partition()}
+            logger.info(s""" Reading :
+                 |Offset : ${record.offset()} from partition ${record
+                            .partition()}
                  |Value : ${record.value()}
                  |Key : ${record.key()}
                  |""".stripMargin)
@@ -52,8 +67,7 @@ object KafkaConsumerService {
           Thread.sleep(3000)
         }
       }
-    }
-    catch {
+    } catch {
       case e: Exception => logger.error(e.toString)
     } finally {
       logger.warn("Closing our consumer, saving the consumer group offsets")

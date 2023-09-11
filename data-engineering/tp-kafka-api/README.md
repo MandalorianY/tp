@@ -10,7 +10,7 @@
 Start multiples kafka servers (called brokers) using the docker compose recipe `docker-compose.yml` :
 
 ```bash
-docker-compose -f docker-compose.yml up --detached
+docker-compose -f docker-compose.yml up -d
 ```
 Check on the docker hub the image used :
 * https://hub.docker.com/r/confluentinc/cp-kafka
@@ -49,6 +49,11 @@ Using the `scala/com.github.polomarcus/utis/KafkaProducerService`, send messages
 Questions :
 * What are serializers (and deserializers) ? What is the one used here ? Why use them ?
 
+Serializers are used to convert data from a data structure to a binary format. Deserializers are used to convert data from a binary format to a data structure.
+The serializer used here is the StringSerializer, it is used to convert a string to a binary format. We use it because we want to send a string to Kafka.
+It's usefull because Kafka can only send binary data.
+
+
 #### To run your program with SBT or Docker
 There are 3 ways to run your program :
 ```bash
@@ -67,21 +72,47 @@ docker compose run my-scala-app bash
 Your ops team tells your app is slow and the CPU is not used much, they were hoping to help you but they are not Kafka experts.
 
 * [ ] Look at the method `producer.flush()`, can you improve the speed of the program ? 
+
+Producer.flush() in the finally is not necessary, it's used to send all the messages in the buffer. If we remove it, the program will be faster.
+
 * [ ] What about batching the messages ? [Help](https://www.conduktor.io/kafka/kafka-producer-batching)
+````scala
+props.put(ProducerConfig.BATCH_SIZE_CONFIG, Integer.toString(32*1024)); // 32 KB batch size
+````
 
 ##### Question 2
 Your friendly ops team warns you about kafka disks starting to be full. What can you do ?
 
 Tips : 
 * [ ] What about [messages compression](https://kafka.apache.org/documentation/#producerconfigs_compression.type) ? Can you implement it ? [You heard that snappy compression is great.](https://www.conduktor.io/kafka/producer-default-partitioner-and-sticky-partitioner)
+
+````scala
+props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+````
+
 * [ ] What about [messages lifetime](https://kafka.apache.org/documentation/#topicconfigs_delete.retention.ms) on your kafka brokers ? Can you change your topic config ?
+
+````bash
+kafka-topics --bootstrap-server localhost:9092 --topic news --alter --config retention.ms=1000
+````
 
 ##### Question 3
 After a while and a lot of deployments and autoscaling (adding and removing due to traffic spikes), on your data quality dashboard you are seeing some messages are duplicates or missing. What can you do ?
 
 * [ ] What are ["acks"](https://kafka.apache.org/documentation/#producerconfigs_acks) ? when to use acks=0 ? when to use acks=all?
+
+Acks is the number of acknowledgments the producer requires the leader to have received before considering a request complete. When acks=0, the producer will not wait for any acknowledgment from the server at all. When acks=all, the leader will wait for the full set of in-sync replicas to acknowledge the record.
+We use acks=0 when we don't care about the data, we use acks=all when we want to be sure that the data is sent.
+Therefore we can use acks=all to be sure that there is no missing messages.
+The tradeoff is that it will be slower.
+
 * [ ] Can [idempotence](https://kafka.apache.org/documentation/#producerconfigs_enable.idempotence) help us ?
+
+Idempotence is used to avoid duplicates messages. It's used to guarantee that the producer will not send duplicate messages to a partition. It's not a solution to missing messages.
+
 * [ ] what is ["min.insync.replicas"](https://kafka.apache.org/documentation/#brokerconfigs_min.insync.replicas) ?
+
+Min.insync.replicas is the minimum number of replicas that must acknowledge a write for the write to be considered successful. It's used to avoid data loss.
 
 #### Consumer - the service in charge of reading messages
 The goal is to read messages from our producer thanks to the ["KafkaConsumerService" class](https://github.com/polomarcus/tp/blob/main/data-engineering/tp-kafka-api/src/main/scala/com/github/polomarcus/utils/KafkaConsumerService.scala#L34-L35).
@@ -103,9 +134,43 @@ What are we noticing ? Can we change a configuration to not re read the same dat
 ##### Question 1
 * [ ] What happens if your consumer crash while processing data ? What is the "at most once" / "at least once" / "exactly once" semantics ? [Help](https://www.conduktor.io/kafka/complete-kafka-consumer-with-java#Automatic-Offset-Committing-Strategy-1)
 
+If the consumer crash while processing data, data loss or duplication depend on the offset management strategy :
+
+When a Kafka consumer crashes while processing data, the behavior and the possibility of data loss or duplication depend on the offset management strategy employed by the consumer. Kafka offers three main offset management semantics:
+
+###### At Most Once (No Guarantees):
+
+In this semantics, the consumer does not commit offsets at all or commits them immediately after receiving a message.
+If the consumer crashes before processing a message, the message may be lost because the offset is not committed.
+If the consumer crashes after processing a message but before committing the offset, the same message may be processed again when the consumer restarts, potentially causing duplicates.
+
+This semantics prioritizes low latency and does not guarantee that every message will be processed or that duplicates will be avoided.
+
+###### At Least Once (Guaranteed Delivery):
+
+In this semantics, the consumer commits offsets only after successfully processing a message.
+If the consumer crashes after processing a message but before committing the offset, the same message will be processed again when the consumer restarts, ensuring that no message is lost. However, this can result in message duplication.
+
+At least once semantics prioritize data integrity and guarantees that no message will be lost but allows for duplicates.
+
+###### Exactly Once (Guaranteed Processing):
+
+This semantics provides strong guarantees that each message will be processed once and only once, without loss or duplication.
+Achieving exactly once semantics requires coordination between the producer and the consumer using mechanisms like idempotent producers and transactions.
+
+With exactly once semantics, even if the consumer crashes and restarts, it will not reprocess the same message, and no messages will be lost or duplicated.
+
 ##### Question 2
 We have introduced a bug in our program, and we would like to replay some data. Can we use Conduktor to help our consumer group? Should we create a new consumer group ?
 * [ ][Help](https://kafka.apache.org/documentation.html#basic_ops_consumer_group)
+
+###### Option 1: Restart Existing Consumer Group:
+
+If you want to replay data in the same consumer group, you can manually seek the consumer to the desired offset using Conduktor or Kafka consumer APIs. This allows you to continue using the same consumer group.
+
+###### Option 2: Create a New Consumer Group:
+
+If you want to isolate the replayed data from the existing consumer group and avoid affecting its processing, you can create a new consumer group. This allows you to replay data independently without interfering with the existing group.
 
 #### Schema Registry - to have more control on our messages
 ##### Intro
@@ -115,22 +180,42 @@ Look at :
 
 ##### Questions
 * [ ] What are the benefits to use a Schema Registry for messages ? [Help](https://docs.confluent.io/platform/current/schema-registry/index.html)
+
+Schema Registry are used to store schemas in other words, it's used to store the structure of the data. Therefore for a topic we can only send to it data with the same structure. It's used for data consistency.
+
 * [ ] Where are stored schemas information ?
+Schemas information are stored in the schema registry.
 * [ ] What is serialization ? [Help](https://developer.confluent.io/learn-kafka/kafka-streams/serialization/#serialization)
+
+Serialization is the process of converting data structures or objects into a format that can be stored or transmitted. It's used to convert data into a binary format.
+
 * [ ] What serialization format are supported ? [Help](https://docs.confluent.io/platform/current/schema-registry/index.html#avro-json-and-protobuf-supported-formats-and-extensibility)
+
+Avro, JSON and Protobuf are supported formats.
+
 * [ ] Why is the Avro format so compact ? [Help](https://docs.confluent.io/platform/current/schema-registry/index.html#ak-serializers-and-deserializers-background)
+
+Avro is so compact because it's a binary format and can be easily parsed and compressed.
+
+
 * [ ] What are the best practices to run a Schema Registry in production ? [Help1](https://docs.confluent.io/platform/current/schema-registry/index.html#sr-high-availability-single-primary) and [Help2](https://docs.confluent.io/platform/current/schema-registry/installation/deployment.html#running-sr-in-production)
+
+###### High Availability:
+Deploy multiple Schema Registry instances in a clustered configuration to ensure high availability and fault tolerance. 
 
 ##### Code
 
 [How to create a custom serializer ?](https://developer.confluent.io/learn-kafka/kafka-streams/serialization/#custom-serdes)
 
+To create a custom SerDes, use the factory method `Serdes.serdeFrom` and pass both a serializer instance and a deserializer instance:
+
 [Kafka Streams Data Types and Serialization](https://docs.confluent.io/platform/current/streams/developer-guide/datatypes.html#avro)
 
 1. Inside `KafkaAvroProducerService`, replace all `???` to send your first message using Avro and the Schema Registry.
+
 2. Add a new property to the class `News` called `test: String`
 3. What happens on your console log when sending messages ?
-4. Modify the class `News` from `test: Option[String] = None`
+4. Modify the class `News` test property to `test: Option[String] = None`
 5. Send another message and on Conduktor Schema Registry tab, see what happens
 
 We've experienced a [schema evolution](https://docs.confluent.io/platform/current/schema-registry/avro.html#schema-evolution).
@@ -175,8 +260,11 @@ cat test.sink.txt
 **How can we use this kind of connector for a production use ( = real life cases ) ?** 
 * [ ] Can we find another connector [on the Confluent Hub](https://www.confluent.io/hub/) that can write inside **a data lake** instead of a simple text file in one of our servers ?
 
+There is a connector that can write inside a data lake : the S3 Sink Connector. It's a connector that can write data from Kafka to S3.
+
 ##### How do Serializers work for Kafka connect ?
 Inside `kafka-connect-config/connect-file-sink.properties`, we need to set the serializer we used to produce the data, for our case we want to use the **String Serializer** inside our config.
+
 
 Tips : [Kafka Connect Deep Dive – Converters and Serialization Explained](https://www.confluent.io/fr-fr/blog/kafka-connect-deep-dive-converters-serialization-explained/)
 
