@@ -57,23 +57,28 @@ object KafkaStreamsService {
            |""".stripMargin)
     })
     // Sink 2 to another topic
-    wordCounts.toStream.to(ConfService.TOPIC_KAFKA_STREAMS)
+    wordCounts.toStream.to(ConfService.TOPIC_KAFKA_STREAMS);
 
+    // new KStream that read from a new topic you need to create `word`.
+    val wordStream: KStream[String, String] =
+      builder.stream[String, String](ConfService.TOPIC_KAFKA_STREAMS_WORD);
     // @TODO join a stream (The join operation is on the keys of the messages) from ConfService.TOPIC_KAFKA_STREAMS_WORD
-    //  Write a function that join a KTable (our word count) with a new KStream that read from a new topic you need to create `word` and textLineStream
+    //  Write a function that join a KTable (our word count) with KSTREAM wordStream
+    // This should display in the console the value of the KTable and the new KStream based on the same key. If we send a message with a key "value10" and the value "active", it should return key : "value10" and value (6, active), that is to say the joined values.
+
+    val joinedStream: KStream[String, (String, Long)] =
+      wordStream.join(wordCounts)((streamValue: String, tableValue: Long) =>
+        (streamValue, tableValue)
+      )
 
     // @TODO display the joined stream using a foreach
-    // logger.info(s"Key $key - value after joined $value")
-
-    wordCounts.toStream.foreach((key, value) => {
-      logger.info(s"""
-             |KTable wordCounts :
-             |key $key - value $value
-             |""".stripMargin)
+    joinedStream.foreach((key, value) => {
+      val (count, word) = value
+      logger.info(s"Joined Stream:\nkey $key - count $count - word $word")
     })
+    // Start the KafkaStreams instance
     val topology = builder.build()
-    val streams: KafkaStreams = new KafkaStreams(topology, props)
-
+    val streams = new KafkaStreams(topology, props)
     logger.info(
       s"""
          |Stream started with this topology :

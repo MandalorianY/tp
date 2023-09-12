@@ -93,7 +93,7 @@ props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
 * [ ] What about [messages lifetime](https://kafka.apache.org/documentation/#topicconfigs_delete.retention.ms) on your kafka brokers ? Can you change your topic config ?
 
 ````bash
-kafka-topics --bootstrap-server localhost:9092 --topic news --alter --config retention.ms=1000
+kafka-configs --bootstrap-server 127.0.0.1:9092 --entity-type topics --entity-name news --alter --add-config retention.ms=1000
 ````
 
 ##### Question 3
@@ -277,12 +277,37 @@ Look on Conduktor to see if a Connector use a consumer group to bookmark partiti
 [Streams Developer Guide](https://docs.confluent.io/platform/current/streams/developer-guide/dsl-api.html#overview)
 
 * [ ] What are the differences between the consumer, the producer APIs, and Kafka streams ? [Help1](https://stackoverflow.com/a/44041420/3535853)
+**Consumer API** allows applications to subscribe to topics and consume data from Kafka clusters. It is used by applications that need to ingest and process data from Kafka.
+**Producer API** allows applications to publish data to Kafka topics. It is used by applications that need to produce and send data to Kafka topics for further processing or distribution.
+**Kafka Streams** is a library for building real-time stream processing applications. It is used by developers to create applications that process and transform data in real-time as it flows through Kafka topics.
+
+
 * [ ] When to use Kafka Streams instead of the consumer API ?
+**Kafka Streams** is used when we want to process and transform data in real-time as it flows through Kafka topics. It's used to create applications that process and transform data in real-time as it flows through Kafka topics.
+
 * [ ] What is a `SerDe`?
+SerDe is a Serializer and Deserializer. It's used to convert data from a data structure to a binary format and vice versa.
+
 * [ ] What is a KStream?
+KStream is a stream of records. It's used to represent an unbounded, continuously updating data set.
+
 * [ ] What is a KTable? What is a compacted topic ?
+KTable is a changelog stream. It's used to represent a changelog stream of updates to a table. A compacted topic is a topic that is configured with log compaction enabled. Log compaction is a mechanism to give finer-grained per-record retention, rather than the coarser-grained time-based retention.
+##### KStream:
+Represents an unbounded, continuously updating stream of data.
+Each record in a KStream represents an individual event or data point.
+Suitable for processing events in real-time, applying transformations, filtering, and performing stateless operations.
+##### KTable:
+Represents a changelog stream, which captures the latest value for each key in a stream.
+Provides a view of the data as a table with each record representing the current state of a specific key.
+Suitable for aggregations, joins, and stateful operations where you want to maintain and query the current state of data by key
+
 * [ ] What is a GlobalKTable?
+A GlobalKTable is a specific type of table in Kafka Streams, which extends the concept of a KTable. While a regular KTable represents a changelog stream and maintains a local view of data partitioned by keys, a GlobalKTable is designed to hold a full copy of the data across all partitions and is available for read operations in a distributed manner across all instances of a Kafka Streams application. It's used to perform joins with KStream.
+
 * [ ] What is a [stateful operation](https://developer.confluent.io/learn-kafka/kafka-streams/stateful-operations/) ?
+
+A stateful operation is a data processing operation in Kafka Streams that involves maintaining and updating state information as data is processed. These operations can track and aggregate data over time, allowing for more complex and context-aware transformations and calculations in real-time stream processing applications.
 
 What are the new [configs](https://kafka.apache.org/documentation/#streamsconfigs) we can use ?
 
@@ -317,6 +342,21 @@ Lot of examples can be found [here](https://blog.rockthejvm.com/kafka-streams/)
 ##### Questions
 * [ ] Which metrics should we monitor once our application is deployed to the real world ?
 [Datadog's Kafka dashboard overview](https://www.datadoghq.com/dashboards/kafka-dashboard/)
+
+- Kafka Broker Metrics:
+Monitor the health and performance of your Kafka brokers, as they are responsible for processing messages.
+Metrics to monitor include network throughput, leader election rate and time, and fetch/request purgatory.
+- Kafka Producer Metrics:
+Monitor the performance of your Kafka producers, which are responsible for pushing messages to broker topics.
+Metrics to monitor include compression rate and fetch rate.
+The compression rate reflects the efficiency of data compression in the batches of data sent by the producer.
+The fetch rate can indicate the health of the consumer, with a dropping fetch rate potentially signaling an issue.
+- Kafka Consumer Metrics:
+Metrics to monitor include consumer lag by consumer group and minimum fetch rate.
+Consumer lag measures the difference between the consumer's current log offset and the producer's current log offset.
+The minimum fetch rate can indicate the overall health of the consumer.
+- ZooKeeper Metrics:
+Responsible for maintaining consumer offsets and topic lists, leader election, and general state information in Kafka.
 
 ### Useful links
 * https://sparkbyexamples.com/kafka/apache-kafka-consumer-producer-in-scala/
