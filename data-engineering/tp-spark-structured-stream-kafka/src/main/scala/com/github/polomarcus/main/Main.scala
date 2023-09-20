@@ -22,21 +22,21 @@ object Main {
 
     //Some examples of what we can do using the untyped or type APIs
     //// Select the devices which have signal more than 10
-    //df.select("news.title").where("media == 'France 2'")      // using untyped APIs
+    // df.select("news.title").where("media == 'France 2'")    // using untyped APIs
     //ds.filter(_.media == "France 2").map(_.title)    // using typed APIs
 
+    // @TODO call here your function from KafkaService
     KafkaService.debugStream(newsDatasets, false)
 
-    //@TODO call here your function from KafkaService
-    ///KafkaService.writeToParquet(newsDatasets)
-
     //@TODO Count the number news we have from different media (Tips: use the typed API, groupBy $"news.media" and count() )
-    //val counted = newsDatasets
-    //???
-    //KafkaService.debugStream(counted)
+    val counted = newsDatasets.groupBy($"news.media").count()
+    KafkaService.debugStream(counted)
 
+    // KafkaService.writeToParquet(newsDatasets)
     //Wait for all streams to finish
     spark.streams.awaitAnyTermination()
+
+    
   }
 }
 

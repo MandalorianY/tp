@@ -9,6 +9,8 @@ services:
       - SCHEMA_REGISTRY=http://kafka-schema-registry:8081
     depends_on:
       - kafka1
+    ports:
+      - "4040:4040"
     volumes:
       - ./:/usr/tp
       - .cache/:/root/.cache # trick to save coursier (sbt) cache
