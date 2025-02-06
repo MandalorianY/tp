@@ -15,15 +15,12 @@ object KafkaProducerService {
     ConfService.BOOTSTRAP_SERVERS_CONFIG
   )
 
-  props.put(
-    ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-    "org.apache.kafka.common.serialization.StringSerializer"
-  )
-  props.put(
-    ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-    "org.apache.kafka.common.serialization.StringSerializer"
-  )
-  props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "false")
+  props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+  props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+  props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "false") // For Question 3
+
+  // @TODO this might be useful for compression (Question 2)
+  // https://kafka.apache.org/documentation/#brokerconfigs_compression.type
 
   props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
 

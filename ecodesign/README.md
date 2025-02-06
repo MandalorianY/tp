@@ -8,9 +8,11 @@ Votre solution [“Eco2Mix”](https://www.rte-france.com/eco2mix/) est utilisé
 Après avoir organisé une [Fresque du Numérique](https://fresquedunumerique.org/) avec vos collègues de travail, les dirigeants de votre entreprise vous donne le feu vert pour démarrer un audit d’éco-conception de la solution [“Eco2Mix”](https://www.rte-france.com/eco2mix/) basé sur le référentiel interministériel d’écoconception des services numériques, pour juger conforme, non conforme ou non applications les différents éléments du référentiel.
 
 ## Consignes
-Par équipe de 10, les 8 thématiques (stratégie, architecture, UX/UI, ...) et faites un audit de chaque critère présent dans le [Référentiel général d'écoconception de services numériques (RGESN)](https://ecoresponsable.numerique.gouv.fr/publications/referentiel-general-ecoconception/) en indiquant si il est conforme, non conforme ou non applicable tout en justifiant si nécessaire en citant vos sources et en donnant des exemples.
+Par équipe de ~4 personnes, les 9 thématiques (stratégie, architecture, UX/UI, ...) et faites un audit de chaque critère présent dans le [Référentiel général d'écoconception de services numériques (RGESN)](https://ecoresponsable.numerique.gouv.fr/publications/referentiel-general-ecoconception/) en indiquant si il est conforme, non conforme ou non applicable tout en justifiant si nécessaire en citant vos sources et en donnant des exemples.
 
-Les 8 thématiques :
+Vous vous souvenez que **la priorité avant l'écoconception est l'accésibilité**, et vous glissez un audit sur ce sujet à l'équipe : https://accessibilite.numerique.gouv.fr/ avant de commencer l'audit d'écoconception.
+
+Après avoir fait l'audit d'accésibilité vous pouvez travailler sur le 9 thématiques :
 * Stratégie : Elle permet de déterminer et de suivre la pertinence, les enjeux et le pilotage de la conception du service numérique.
 * Spécifications : Indépendamment du type de gestion projet, cette thématique regroupe les éléments de cadrage projet, les moyens mis en œuvre, les objectifs et contraintes du projet sur toute la durée de vie du service numérique.
 * Architecture : La stratégie de conception et l'articulation des composants applicatifs entre le frontend et le backend.
@@ -19,9 +21,14 @@ Les 8 thématiques :
 * Frontend : Ensemble des composants en opération sur un terminal utilisateur pour permettre l'utilisation d'un service numérique.
 * Backend :  Ensemble des composants en opération côté serveur pour permettre le fonctionnement d'un service numérique.
 * Hébergement : Moyens mis en œuvre côté serveur pour permettre l'utilisation d'un service numérique.
+* Algorithmie : Cette partie concerne les services numériques reposant sur une intelligence artificielle (IA)
 
 ## De l'aide
 Vous trouverez dans les différents dossiers de ce répertoire quelques liens utiles selon certaines thématiques.
 
 ## Rendu / Présentation
 Le résultat sera sous format d'une présentation à la classe avec un maximum d'exemples marquant pour que chacun puisse découvrir les autres thématiques selon votre point de vue (c'est le [principe d'arpentage](https://la-trouvaille.org/arpentage/))
+
+## Questionnaire final
+
+[Lien vers le questionnaire](https://techologie.net/extra/jeu-ecoconception/) de 16 questions

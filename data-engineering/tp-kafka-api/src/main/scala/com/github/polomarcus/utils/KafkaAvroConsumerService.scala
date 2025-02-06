@@ -1,8 +1,8 @@
 package com.github.polomarcus.utils
 
 import com.github.polomarcus.conf.ConfService
-import com.sksamuel.avro4s.{Record, RecordFormat}
 import com.github.polomarcus.models.News
+import com.sksamuel.avro4s.{Record, RecordFormat}
 import com.typesafe.scalalogging.Logger
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import org.apache.kafka.clients.consumer.{ConsumerConfig, KafkaConsumer}
@@ -82,7 +82,6 @@ object KafkaAvroConsumerService {
                  |Offset : ${record.offset()} from partition ${record
                             .partition()}
                  |Unserialized value (raw) : ${record.value()}
-
                  |Key : ${record.key()}
                  |""".stripMargin)
           })

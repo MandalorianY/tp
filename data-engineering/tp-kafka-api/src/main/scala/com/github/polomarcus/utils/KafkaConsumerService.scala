@@ -12,7 +12,7 @@ import java.util.Properties
 object KafkaConsumerService {
   val logger = Logger(KafkaProducerService.getClass)
 
-  val topic = ConfService.TOPIC_OUT
+
 
   val props: Properties = new Properties()
   props.put("group.id", ConfService.GROUP_ID)
@@ -44,6 +44,7 @@ object KafkaConsumerService {
   props.put("auto.commit.interval.ms", "1000")
 
   val consumer = new KafkaConsumer[String, String](props)
+  val topic = ConfService.TOPIC_OUT
   val topicToRead = List(topic).asJava
 
   // we need to connect our consumer to our topic by **subscribing** it, tips : https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html#idm45788273579960
@@ -63,7 +64,7 @@ object KafkaConsumerService {
                  |""".stripMargin)
           })
         } else {
-          logger.info("No new messages, waiting 3 seconds")
+          logger.info(s"No new messages, waiting 3 seconds - will shutdown in ${i}/${numberOfLoop}")
           Thread.sleep(3000)
         }
       }

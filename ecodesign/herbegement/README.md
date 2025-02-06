@@ -1,8 +1,15 @@
 # Hébergement / Hosting
 ## Comprendre le mix électrique par pays 
-* Consulter [electricity map](https://app.electricitymaps.com/map) et identifier les pays avec une énergie peu carbonée
-* [AWS buys 100+ diesel generators... and that's just for Irish datacenters](https://www.theregister.com/2022/10/24/aws_irish_datacenter_diesel/)
+* Consulter [electricity map](https://app.electricitymaps.com/map) et **identifier les pays avec une énergie peu carbonée**
+* Voir que l'intensité carbone change selon l'horaire et comment certains cloud provider s'en servent : https://cloud.google.com/sustainability/region-carbon
+* Voir les limites de certaines annoncent "100% renouvelable" : [AWS buys 100+ diesel generators... and that's just for Irish datacenters](https://www.theregister.com/2022/10/24/aws_irish_datacenter_diesel/)
 
+## Comprendre que les datacenters utilisent de l'energie et de l'eau
+A l'aide de ce site de l'hébergeur Scaleway, vous pouvez voir leur consommation en energie (PUE) et en eau (WUE) :
+* https://www.scaleway.com/fr/leadership-environnemental/
+
+Vous pouvez comparer ces valeurs avec ceux de Google Cloud Platform et conclure des choses :
+* https://www.google.com/intl/fr/about/datacenters/efficiency/
 
 # Des cloud providers sans impact ?
 En lisant ou parcourant ces 2 phrases et articles
