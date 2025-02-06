@@ -1,12 +1,19 @@
-name: tp-data-processing-framework CI
+name: Test functional-programming-scala
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
+    paths:
+      - 'data-engineering/tp-functional-programming-scala/src/**'
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
 
 defaults:
  run:
-  working-directory: ./data-engineering/tp-data-processing-framework
+  working-directory: ./data-engineering/tp-functional-programming-scala
 
 jobs:
   run-my-tests:
@@ -17,14 +24,9 @@ jobs:
 
     - name: Cache Coursier dependencies
       uses: coursier/cache-action@v6
-      with:
-        path: ~/.cache/coursier
-        key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
-        restore-keys: |
-          ${{ runner.os }}-coursier-
 
     - name: Set up JDK 11
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v4
       with:
         java-version: '11'
         distribution: 'adopt'
@@ -32,9 +34,8 @@ jobs:
     - name: Install sbt
       run: |
         curl -L -o sbt.zip https://github.com/sbt/sbt/releases/download/v1.10.7/sbt-1.10.7.zip
-        unzip sbt.zip -d /usr/local
-        mv /usr/local/sbt-1.10.7/usr/local/sbt
-        echo "::add-path::/usr/local/sbt/bin"
+        unzip sbt.zip -d $HOME/sbt
+        echo "$HOME/sbt/sbt/bin" >> $GITHUB_PATH
         
     - name: Run tests
       run: sbt test
